@@ -1,22 +1,43 @@
-version: "3"
+version: '3.3'
+
 services:
-  postgres:
-    build: ./database
+  db:
+    image: postgres
+    container_name: docker-django-vue-db
     environment:
-      POSTGRES_DB: todo
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    restart: unless-stopped
     ports:
-      - 5432
-  go-api:
-    build: ./backend
+      - "5432:5432"
+  django:
+    build:
+      context: ./backend/
+      dockerfile: ./BackendDockerfile      
+    container_name: docker-django-vue-backend  
+    command: ./backend_setup.sh
+    environment:
+      POSTGRES_NAME: postgres
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_HOST: db
+    volumes:
+      - ./backend:/app/backend
     ports:
-      - 8081:8081
+      - "8000:8000"
     depends_on:
-      - postgres
-    links:
-      - postgres
-  react-app:
-    build: ./frontend
+      - db
+  vue:
+    build:
+      context: ./frontend/
+      dockerfile: ./FrontendDockerfile
+    container_name: docker-django-vue-frontend
+    command: ./frontend_setup.sh
+    volumes:
+      - ./frontend:/app/frontend
     ports:
-      - 3000:3000
+      - "8080:8080"
+    depends_on:
+      - django

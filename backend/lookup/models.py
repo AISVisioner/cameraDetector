@@ -8,7 +8,7 @@ class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(blank=False, editable=True, max_length=100)
     # encoding = ArrayField(models.FloatField)
-    photo = models.ImageField(blank=True, editable=True)
+    photo = models.ImageField(blank=True, editable=True, upload_to='media/')
     visits_count = models.IntegerField(default=0, blank=False, editable=True)
     recent_access_at = models.DateTimeField(auto_now=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)

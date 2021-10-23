@@ -1,17 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
 
+// ルーター機能で指定されたエンドポイントに移動。→webpackChunkNameでbackend/staticに保存されるjs&cssファイルの名前を指定。
 const routes = [
   {
     path: "/",
     name: "home",
-    component: Home,
-  },
-  {
-    path: "/manager/",
-    name: "Manager",
     component: () =>
-      import(/* webpackChunkName: "manager-page" */ "../views/Manager.vue"), 
+      import(/* webpackChunkName: "home-page" */ "../views/Home.vue"),
     props: true
   },
   {

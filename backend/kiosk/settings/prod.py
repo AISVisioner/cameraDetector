@@ -23,3 +23,14 @@ DEBUG = False # bool(os.getenv('DJANGO_DEBUG', ''))
 
 # Set to your Domain here (eg. 'yourwebsite.com')
 ALLOWED_HOSTS = ['*']
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'user',
+        'PASSOWRD': 'pass',
+        'HOST': 'db',
+        'PORT': 5432,
+    },
+}

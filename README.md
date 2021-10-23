@@ -1,9 +1,12 @@
 # cameraDetector
-카메라를 이용해 방문자를 식별하고 인사를 하는 키오스크를 개발
+### Developing a kiosk which recognizes visitors and greets using a camera.
+<hr>
+<br>
 
 **Single Page Application built with Django, Django REST Framework and Vue JS**
+![kiosk_description](https://user-images.githubusercontent.com/50127194/138567761-d1cca4db-c9dc-4629-9461-74f805cc9772.png)
 
-## Hot to set up the project to run on your local machine?
+## How to set up the project to run on your local machine?
 
 #### Create a new Python Virtual Environment:
 ```
@@ -20,6 +23,7 @@ pip3 install -m ./requirements.txt
 #### Apply the migrations as usual.
 
 ```
+cd cameraDetector/backend
 python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py createsuperuser
@@ -38,7 +42,8 @@ npm run serve
 
 #### Run Django's development server:
 ```
-python manage.py runserver
+cd cameraDetector/backend
+python3 manage.py runserver
 ```
 
 #### Open up Chrome and go to 127.0.0.1:8000 and the app is now running in development mode!

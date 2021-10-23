@@ -72,14 +72,6 @@ WSGI_APPLICATION = 'kiosk.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'postgres',
-    #     'USER': 'user',
-    #     'PASSOWRD': 'pass',
-    #     'HOST': 'db',
-    #     'PORT': 5432,
-    # },
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -120,8 +112,8 @@ USE_L10N = True
 USE_TZ = True
 
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/manager/" # /manager after registration or login
-LOGOUT_REDIRECT_URL = "/" # /user after logout
+LOGIN_REDIRECT_URL = "/" # /manager after registration or login
+LOGOUT_REDIRECT_URL = "/accounts/login/" # /user after logout
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -131,6 +123,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # STATIC_ROOT = "" # The absolute path to the directory where collectstatic will collect static files for deployment.
 

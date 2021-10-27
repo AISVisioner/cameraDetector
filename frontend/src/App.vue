@@ -26,6 +26,7 @@ export default {
         const requestUser = response.data["username"];
         window.localStorage.setItem("username", requestUser);
         this.requestUser = window.localStorage.getItem("username");
+        console.log(this.requestUser)
       } catch (error) {
         console.log(error.response);
         console.log(this.requestUser)

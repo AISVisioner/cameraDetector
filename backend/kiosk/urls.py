@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from django_registration.backends.one_step.views import RegistrationView
 
@@ -45,4 +47,4 @@ urlpatterns = [
     path("api/v1/", include("lookup.api.urls")),
 
     re_path(r"^.*$", IndexTemplateView.as_view(), name="entry-point"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

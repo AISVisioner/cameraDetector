@@ -1,0 +1,29 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor Visitor as visitor
+actor Administrator as admin
+package Kiosk {
+    usecase UC1 as "Wait for seconds while a visitor's face is being recognized
+    --
+    extension points
+    Recognized as a visitor"
+
+    usecase UC2 as "Get a greeting from a kiosk welcoming the visitor's nth visit"
+    usecase UC3 as "Fetch a token for authorization"
+    visitor -- (UC1)
+    (UC2) .> (UC3) : include
+    (UC2) .> (UC1) : extends
+}
+package AdministratorPage {
+    usecase UC4 as "Check a list of visitors"
+    usecase UC5 as "Fetch a token for authorization"
+}
+package Server {
+    usecase UC6 as "Log in as an administrator"
+    (UC4) -- admin
+    (UC4) .> (UC5) : include
+    (UC5) .> (UC6) : include
+    (UC3) .> (UC6) : include
+}
+@enduml

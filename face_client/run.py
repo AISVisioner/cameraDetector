@@ -3,13 +3,9 @@ import cv2 as cv
 import face_recognition # depencancy on dlib
 import uuid
 import requests
-import numpy as np
 import time
 from datetime import datetime, timezone
 import os
-import re
-import base64
-from PIL import Image
 import pyttsx3
 
 from get_token import get_token

@@ -1,0 +1,11 @@
+@startuml
+|#pink|Administrator|
+start
+:Log in as an administrator;
+:Check a list of visitors;
+|#LightGray|Server|
+:Fetch a list of visitors;
+|Administrator|
+:Browse the list of visitors;
+stop
+@enduml

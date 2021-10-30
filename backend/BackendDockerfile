@@ -1,6 +1,8 @@
 FROM python:3
 ENV   PYTHONUNBUFFERED 1
 
+RUN apt-get update && apt-get -y install cmake protobuf-compiler
+
 WORKDIR /app/backend
 COPY requirements.txt ./
 

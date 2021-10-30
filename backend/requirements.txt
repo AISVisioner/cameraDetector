@@ -8,3 +8,4 @@ psycopg2-binary
 Pillow
 python-dotenv
 pyttsx3
+face_recognition

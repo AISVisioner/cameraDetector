@@ -1,0 +1,42 @@
+@startuml
+actor "Visitor" as visitor
+participant ":Kiosk" as kiosk
+participant ":Server" as server
+participant ":Database" as db
+activate visitor
+visitor -> kiosk: Stand in front
+activate kiosk
+kiosk -> server: requestAuthorization(username, password)
+activate server
+server -> server: checkAuthorization(username, password)
+server --> kiosk: AuthorizationPassed
+loop#Gold No stop sign or error
+    kiosk -> kiosk: recognize the visitor's face
+    kiosk -> server: requestCheckVisitscount(visitor_data)
+    server -> db: requestVisitorsData(query)
+    activate db
+    db -> db: selectVisitorsData()
+    db --> server: visitors_data
+    server -> server: calculateSimilarity(visitor_data, visitors_data)
+    alt#Gold a similar visitor is found
+        server -> db: updateVisitsCount(query)
+        db -> db: updateVisitsCount(query)
+        db --> server: VisitsCount Updated
+    else No similar visitor is found
+        server -> db: createVisitor(query)
+        db -> db: createVisitor(query)
+        db --> server: Visitor Created
+        destroy db
+    end
+    server --> kiosk: visits_count
+    destroy server
+    alt#Gold visits_count = 1
+        kiosk --> visitor: greet and welcome the visitor's first visit
+    else visits_count > 1
+        kiosk --> visitor: greet and welcome the visitor's nth visit
+    end
+end
+destroy kiosk
+destroy visitor
+
+@enduml

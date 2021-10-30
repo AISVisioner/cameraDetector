@@ -1,8 +1,6 @@
 from django.utils import timezone
 
-import re
 from rest_framework import status, viewsets
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -10,20 +8,11 @@ from rest_framework.permissions import IsAuthenticated
 from lookup.api.serializers import UserSerializer
 from lookup.models import Visitor
 
-import uuid
 import face_recognition
-import datetime
 import numpy as np
-import traceback
 import copy
 from itertools import chain
-import time
-import pathlib
-import imghdr
-from PIL import Image
-from io import BytesIO
 
-import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.files.images import ImageFile
@@ -54,12 +43,9 @@ class LookupViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         """Add request as a lookup instance after verication"""
-        print('pass')
         serializer = self.serializer_class(self.queryset, many=True)
-        print('pass2')
         print(serializer)
         users = dict(zip([data['id'] for data in serializer.data], [data['encoding'] for data in serializer.data]))
-        print('pass2_1')
         registered = False
         _mutable = request.POST._mutable
         request.POST._mutable = True
@@ -67,11 +53,8 @@ class LookupViewSet(viewsets.ModelViewSet):
         request.POST._mutable = _mutable
         user_matched = face_recognition.compare_faces(list(users.values()), np.array(request.POST.getlist('encoding')))
         print(user_matched)
-        print('pass2_2')
         for i, user_matched in enumerate(user_matched):
-            print('pass2_3')
             if user_matched:
-                print('pass2_3_1')
                 user_id_matched = list(users.keys())[i]
                 instance = self.queryset.get(pk=user_id_matched)
                 data = copy.copy(instance)
@@ -89,7 +72,6 @@ class LookupViewSet(viewsets.ModelViewSet):
                 registered = True
                 return Response(_serializer.data, status=status.HTTP_200_OK)
         # if the requested user isn't registerd
-        print('pass2_4')
         if not registered:
             # user_id = str(uuid.uuid4())
             print(f'new user {request.POST["id"]}')
@@ -120,27 +102,18 @@ class LookupViewSet(viewsets.ModelViewSet):
             # data = ContentFile(request.FILES['photo'])
             data = ImageFile(open(request.FILES['photo']), 'rb')
             request.POST['photo'] = data
-            print('here2')
             request.POST._mutable = _mutable
-            print('here3')
             print(request.POST)
-            print('here4')
             # print(imghdr.what(request.POST['photo']))
-            print('pass3')
             _serializer = self.serializer_class(data=request.POST)
             _serializer.is_valid()
             print(_serializer.errors)
             print(_serializer.validated_data)
-            print('pass4')
             obj = Visitor.objects.create(**_serializer.validated_data)
-            print('pass5')
             obj.save()
-            print('pass6')
             return Response(_serializer.validated_data, status=status.HTTP_201_CREATED)
 
             # users[user_id] = request.encoding
-
-            # cv.putText(frame, f'new user {user_id}', (0,50), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
             
 
     def update(self, request, pk=None):

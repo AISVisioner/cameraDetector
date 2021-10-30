@@ -9,13 +9,34 @@ from datetime import datetime, timezone
 import os
 import re
 import base64
+from PIL import Image
+import pyttsx3
 
 from get_token import get_token
 
 COUNT = 5
 WINDOW_NAME = "cam"
+WAITING_TIME = 40
+
+start_time = 0
+passed_time = 0
+
+check_if_sometime_passed = {}
+
 
 users = {}
+
+engine = pyttsx3.init()
+
+engine.setProperty('rate', 180)
+rate = engine.getProperty('rate')
+
+engine.setProperty('volume', 0.5)
+volume = engine.getProperty('volume')
+
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)
+
 # user = {"uuid-1231-123123": [.1232345, .23456734]}
 
 # cv.namedWindow('webcam', cv.WND_PROP_FULLSCREEN)
@@ -38,6 +59,8 @@ def main(argv):
     cap = cv.VideoCapture(url)
     encodings = []
     matched = False
+    flag = False
+    engine.startLoop(False)
     while True:
         # VideoCaptureから1フレーム読み込む
         ret, frame = cap.read()
@@ -52,8 +75,8 @@ def main(argv):
         print(boxes)
         for box in boxes:
             # 顔の位置をバウンディングボックスで表示
-            color = tuple(map(int, np.random.choice(range(256), size=3)))
-            frame = cv.rectangle(frame, (box[1], box[0]), (box[3], box[2]), color, 2)
+            # color = tuple(map(int, np.random.choice(range(256), size=3)))
+            frame = cv.rectangle(frame, (box[1], box[0]), (box[3], box[2]), (0, 255, 0), 2)
             cv.imshow(WINDOW_NAME, frame)
 
             # 128個の顔の特徴点を抽出
@@ -73,14 +96,22 @@ def main(argv):
             break
 
         if matched:
+            flag = True
             id = ''
             current_time = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d_%H:%M:%S")
-            guest_name = f"guest_{current_time}"
+            guest_name = f"guest_{current_time}_{str(uuid.uuid4())[:10]}"
             if not os.listdir("./images") == []:
                 os.remove(f"./images/{os.listdir('./images')[0]}")
             cv.imwrite(f'./images/{guest_name}.jpg', frame_backup)
-            print("Checking verification")
-            time.sleep(2)
+            print("Please wait until your check-in is verified.")
+            engine.say("Please wait until your check-in is verified.")
+            engine.iterate()
+            _frame = frame.copy()
+            cv.putText(_frame, "Please wait until your check-in is verified.", \
+                (100,700), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+            cv.imshow(WINDOW_NAME, _frame)
+            cv.waitKey(1)
+            time.sleep(5)
             # with open(f"./images/{guest_name}.jpg", 'rb') as img_file:
             #     encoded_photo = base64.b64encode(img_file.read())
 
@@ -100,21 +131,63 @@ def main(argv):
             }
             response=''
             try:
-                response = requests.post(f'{os.getenv("BASEURL")}/api/v1/lookup/', files=files, data=data, headers={'Authorization': f'Token {MY_TOKEN}'})
+                response = requests.post(f'{os.getenv("BASEURL")}/api/v1/lookup/', \
+                    files=files, data=data, headers={'Authorization': f'Token {MY_TOKEN}'})
                 response.raise_for_status()
             except:
                 print(response.headers["date"])
-                print("Internet connection error!")
-            print(response.json())
-            exit()
-            # visits_count = response
-            # if visits_count == 1:
-            #     print(f"{guest_name}: Welcome your first visit!")
-            # elif visits_count > 1:
-            #     print(f"{guest_name}: Welcome your {visits_count}th visit!")
+                print("Sorry, an error occurred while accessing the server. Please contact 010-xxxx-xxxx for any inquiries.")
+                engine.say("Sorry, an error occurred while accessing the server. Please contact 010-xxxx-xxxx for any inquiries.")
+                cv.putText(frame, "Sorry, an error occurred while accessing the server.", \
+                    (0,650), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+                cv.putText(frame, "Please contact 010-xxxx-xxxx for any inquiries.", \
+                    (0,700), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+                cv.imshow(WINDOW_NAME, frame)
+                cv.waitKey(1)
+                time.sleep(10)
+                continue
+            visits_count = response.json()['visits_count']
+            guest_name = response.json()['name']
+            # check if guest_name exits as a key in check_if_sometime_passed dict
+            print(check_if_sometime_passed)
+            if guest_name not in check_if_sometime_passed.keys():
+                check_if_sometime_passed[guest_name] = time.time()
+            else:
+                if time.time() - check_if_sometime_passed[guest_name] < WAITING_TIME:
+                    print("Your check-in is already verified. Please check in again later.")
+                    engine.say("Your check-in is already verified. Please check in again later.")
+                    cv.putText(frame, "Your check-in is already verified.", \
+                        (200,650), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+                    cv.putText(frame, "Please check in again later.", \
+                        (280,700), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+                    cv.imshow(WINDOW_NAME, frame)
+                    cv.waitKey(1)
+                    time.sleep(10)
+                    continue
+                else:
+                    check_if_sometime_passed[guest_name] = time.time()
+            if visits_count == 1:
+                print(f"{guest_name}: Welcome your first visit!")
+                engine.say(f"Hello! Welcome your first visit!")
+                # engine.runAndWait()
+                cv.putText(frame, f"{guest_name}:", \
+                    (100,650), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+                cv.putText(frame, f"Welcome your first visit!", \
+                    (300,700), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+            elif visits_count > 1:
+                print(f"{guest_name}: Welcome your {visits_count}th visit!")
+                engine.say(f"Hello! Welcome your {visits_count}th visit!")
+                # engine.runAndWait()
+                cv.putText(frame, f"{guest_name}:", \
+                    (100,650), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+                cv.putText(frame, f"Welcome your {visits_count}th visit!", \
+                    (300,700), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+            cv.imshow(WINDOW_NAME, frame)
+            encodings.clear()
+            
 
 
-            registered = False
+            # registered = False
             # my_headers = {
             #     "name" : guest_name
             # }
@@ -123,31 +196,38 @@ def main(argv):
             # except:
             #     print("Internet connection error!")
             # users = response["result"]
-            user_matched = face_recognition.compare_faces(list(users.values()), encoding)
-            print("a", user_matched)
-            # edframe = frame
-            for i, user_matched in enumerate(user_matched):
-                if user_matched:
-                    cv.putText(frame, f'matched no.{i} {list(users)[i]}', (0,50), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
-                    print(f'matched no.{i} {list(users)[i]}')
-                    registered = True
-            # 登録されていないユーザーの場合
-            if not registered:
-                user_id = str(uuid.uuid4())
-                users[user_id] = encoding
-                cv.putText(frame, f'new user {user_id}', (0,50), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
-                print(f'new user {user_id}')
-            cv.imshow(WINDOW_NAME, frame)
+            # user_matched = face_recognition.compare_faces(list(users.values()), encoding)
+            # print("a", user_matched)
+            # # edframe = frame
+            # for i, user_matched in enumerate(user_matched):
+            #     if user_matched:
+            #         cv.putText(frame, f'matched no.{i} {list(users)[i]}', (0,50), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+            #         print(f'matched no.{i} {list(users)[i]}')
+            #         registered = True
+            # # 登録されていないユーザーの場合
+            # if not registered:
+            #     user_id = str(uuid.uuid4())
+            #     users[user_id] = encoding
+            #     cv.putText(frame, f'new user {user_id}', (0,50), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
+            #     print(f'new user {user_id}')
+            # cv.imshow(WINDOW_NAME, frame)
         matched = False
 
         # キー入力を1ms待って、k が27（ESC）だったらBreakする
         k = cv.waitKey(1)
         if k == 27:
             break
+        if flag == True:
+            engine.iterate()
+            time.sleep(10)
+            flag = False
 
+    engine.stop()
+    engine.endLoop()
     # キャプチャをリリースして、ウィンドウをすべて閉じる
     cap.release()
     cv.destroyAllWindows()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+    print('here')

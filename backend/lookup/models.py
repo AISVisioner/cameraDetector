@@ -12,7 +12,7 @@ class Visitor(models.Model):
     name = models.CharField(blank=False, editable=True, max_length=100)
     encoding = ArrayField(models.FloatField(blank=True, editable=False), blank=True, editable=True)
     photo = models.ImageField(blank=True, editable=True, upload_to='')
-    visits_count = models.IntegerField(default=1, blank=False, editable=True)
+    visits_count = models.IntegerField(default=1, blank=True, editable=True)
     recent_access_at = models.DateTimeField(auto_now_add=True, editable=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=True)
     updated_at = models.DateTimeField(auto_now_add=True, editable=True)

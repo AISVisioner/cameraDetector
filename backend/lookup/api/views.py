@@ -20,10 +20,14 @@ from itertools import chain
 import time
 import pathlib
 import imghdr
+from PIL import Image
+from io import BytesIO
 
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.core.files.images import ImageFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 
 def to_dict(instance):
@@ -41,7 +45,7 @@ class LookupViewSet(viewsets.ModelViewSet):
     queryset = Visitor.objects.all().order_by("-created_at")
     serializer_class = UserSerializer
     authentication_classes = [TokenAuthentication] # トークンを発行してAPIへの接続を許可する。
-    permission_classes = [IsAuthenticated] # 要ログイン
+    permission_classes = [IsAuthenticated] # Login required
     lookup_field = "id"
 
     def list(self, request):
@@ -50,16 +54,24 @@ class LookupViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         """Add request as a lookup instance after verication"""
+        print('pass')
         serializer = self.serializer_class(self.queryset, many=True)
+        print('pass2')
+        print(serializer)
         users = dict(zip([data['id'] for data in serializer.data], [data['encoding'] for data in serializer.data]))
+        print('pass2_1')
         registered = False
         _mutable = request.POST._mutable
         request.POST._mutable = True
         request.POST.setlist('encoding', list(map(float, request.POST.getlist('encoding'))))
         request.POST._mutable = _mutable
         user_matched = face_recognition.compare_faces(list(users.values()), np.array(request.POST.getlist('encoding')))
+        print(user_matched)
+        print('pass2_2')
         for i, user_matched in enumerate(user_matched):
+            print('pass2_3')
             if user_matched:
+                print('pass2_3_1')
                 user_id_matched = list(users.keys())[i]
                 instance = self.queryset.get(pk=user_id_matched)
                 data = copy.copy(instance)
@@ -76,29 +88,54 @@ class LookupViewSet(viewsets.ModelViewSet):
                 print(f'matched no.{i} {list(users)[i]}')
                 registered = True
                 return Response(_serializer.data, status=status.HTTP_200_OK)
-        # 登録されていないユーザーの場合
+        # if the requested user isn't registerd
+        print('pass2_4')
         if not registered:
             # user_id = str(uuid.uuid4())
             print(f'new user {request.POST["id"]}')
             # with open(request.FILES['photo']) as file:
             #     file.write
-            data = request.FILES['photo']
-            path = default_storage.save(f'tmp/{str(request.FILES["photo"])}', ContentFile(data.read()))
-            time.sleep(5)
-            tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+            # print('type', type(request.FILES['photo']))
+            # data = open(request.FILES['photo'], 'rb')
+            # print('type', type(data))
+            # print('data', type(data), data)
+            # path = default_storage.save(f'tmp/{str(request.FILES["photo"])}', ContentFile(data.read()))
+            # time.sleep(3)
+            # tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+            # tmp_file = os.path.join(os.getcwd(), path)
+            # pil_image_obj = Image.open(request.FILES['photo'])
+            # new_image_io = BytesIO()
+            # pil_image_obj.save(new_image_io, format='JPEG')
+            # image_file = InMemoryUploadedFile(new_image_io, None, str(request.FILES['photo']), 'image/jpeg',
+            #                       new_image_io.getbuffer().nbytes, None)
+            # print('image_file', type(image_file), dir(image_file))
             _mutable = request.POST._mutable
             request.POST._mutable = True
-            request.POST['visits_count'] = 1
-            request.POST['photo'] = tmp_file
+            request.POST['visits_count'] = 0
+            print('here1')
+            # try:
+            #     data = ImageFile(request.FILES['photo'].read(), name=str(request.FILES['photo']))
+            # except:
+            #     data = ContentFile(request.FILES['photo'].read(), name=str(request.FILES['photo']))
+            # data = ContentFile(request.FILES['photo'])
+            data = ImageFile(open(request.FILES['photo']), 'rb')
+            request.POST['photo'] = data
+            print('here2')
             request.POST._mutable = _mutable
+            print('here3')
             print(request.POST)
-            print(imghdr.what(request.POST['photo']))
+            print('here4')
+            # print(imghdr.what(request.POST['photo']))
+            print('pass3')
             _serializer = self.serializer_class(data=request.POST)
             _serializer.is_valid()
             print(_serializer.errors)
             print(_serializer.validated_data)
+            print('pass4')
             obj = Visitor.objects.create(**_serializer.validated_data)
+            print('pass5')
             obj.save()
+            print('pass6')
             return Response(_serializer.validated_data, status=status.HTTP_201_CREATED)
 
             # users[user_id] = request.encoding

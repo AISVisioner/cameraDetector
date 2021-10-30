@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -32,6 +34,8 @@ INSTALLED_APPS = [
     'django_registration',
     'djoser',
     'widget_tweaks',
+
+    'django_cleanup',
 
     'users',
     'lookup',
@@ -145,3 +149,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'core.pagination.PageNumberPaginationNoCount',
     'PAGE_SIZE': 5
 }
+
+    # 'DEFAULT_PARSER_CLASSES': (
+    # 'rest_framework.parsers.JSONParser',
+    # 'rest_framework.parsers.FormParser',
+    # 'rest_framework.parsers.MultiPartParser',
+    # ),

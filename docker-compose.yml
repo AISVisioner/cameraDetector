@@ -6,10 +6,12 @@ services:
     container_name: docker-django-vue-db
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
     restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
   django:
@@ -20,8 +22,8 @@ services:
     command: ./backend_setup.sh
     environment:
       POSTGRES_NAME: postgres
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_HOST: db
     volumes:
       - ./backend:/app/backend
@@ -41,3 +43,5 @@ services:
       - "8080:8080"
     depends_on:
       - django
+volumes:
+  db-data:

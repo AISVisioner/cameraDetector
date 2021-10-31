@@ -1,0 +1,28 @@
+@startuml
+actor "Administrator" as admin
+participant ":LoginPage" as loginpage
+participant ":VisitorsListPage" as vlpage
+participant ":Server" as server
+participant ":Database" as db
+activate admin
+admin -> loginpage: Enter the log in page
+activate loginpage
+loginpage --> admin: Show Log in page
+admin -> loginpage: Input Username and Password
+loginpage -> vlpage: requestVisitorsListPage(username, password)
+activate vlpage
+vlpage -> server: requestVisitorsList()
+activate server
+server -> db: requestVisitorsList(query)
+activate db
+db -> db: selectVisitorsList(query)
+db --> server: visitors_list
+destroy db
+server --> vlpage: visitors_list
+destroy server
+vlpage --> loginpage: visitors_list_url
+destroy vlpage
+loginpage --> admin: Show Visitors List Page
+admin -> loginpage: Click the logout button
+loginpage --> admin: Show Log in Page
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+|#pink|Kiosk|
+start
+:Start to capture a face in every frame;
+while (Stop sign or error?) is (No)
+    while (N consecutive frames capture the same face?) is (No)
+        if (Stop sign or error?) is (No) then
+            :capture next frame;
+        else (Yes)
+            stop
+        endif
+    endwhile (Yes)
+    :Send the visitor's data to server;
+    |#lightgray|Server|
+    :Calculate the similarity with visitors in database;
+    if (There's a visitor's data similar to the current visitor's?) is (Yes) then
+        :Increase the current visitor's visits_count by 1;
+    else (No)
+        :Creat the current visitor's instance in database;
+    endif
+    :Send back the updated request data to kiosk as a response;
+    |Kiosk|
+    if (the current visitor's visits_count is one) is (Yes) then
+        :Greet and welcome the current visitor's first visit;
+    else (No)
+        :Greet and welcome the current visitor's nth visit;
+    endif
+endwhile (Yes)
+stop
+@enduml

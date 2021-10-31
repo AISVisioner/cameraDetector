@@ -45,6 +45,6 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
 
     path("api/v1/", include("lookup.api.urls")),
-
-    re_path(r"^.*$", IndexTemplateView.as_view(), name="entry-point"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [re_path(r"^.*$", IndexTemplateView.as_view(), name="entry-point")]

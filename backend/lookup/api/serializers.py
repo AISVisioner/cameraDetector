@@ -53,6 +53,7 @@ class Base64ImageField(serializers.ImageField):
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(format="hex")
+    name = serializers.CharField()
     encoding = serializers.ListField(child=serializers.FloatField())
     # photo = Base64ImageField(max_length=None, use_url=True)
     photo = serializers.ImageField(required=False)
@@ -63,7 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Visitor
-        fields = '__all__'
+        fields = ['id', 'name', 'encoding', 'photo', 'visits_count', 'created_at', 'updated_at', 'recent_access_at']
         exclude = []
 
     def get_created_at(self, instance):

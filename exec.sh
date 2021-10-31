@@ -1,4 +1,5 @@
-sudo apt install cmake
+docker-compose up --build -d
+brew install cmake
 python3 -m venv venv
 source ./venv/bin/activate
 pip3 install -r requirements.txt

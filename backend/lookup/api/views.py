@@ -67,7 +67,6 @@ class LookupViewSet(viewsets.ModelViewSet):
                 _serializer.is_valid(raise_exception=True)
                 print(_serializer.errors)
                 _serializer.save()
-                # cv.putText(frame, f'matched no.{i} {list(users)[i]}', (0,50), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
                 print(f'matched no.{i} {list(users)[i]}')
                 registered = True
                 return Response(_serializer.data, status=status.HTTP_200_OK)

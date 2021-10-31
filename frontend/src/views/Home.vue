@@ -1,7 +1,31 @@
 <template>
     <div>
         <h1>Logged in as: {{ String(requestUser) }}</h1>
-        <b-table striped hover :items="visitors"></b-table>
+        <div class="container">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>photo</th>
+                        <th>visits_count</th>
+                        <th>created_at</th>
+                        <th>updated_at</th>
+                        <th>recent_access_at</th>
+                    </tr>
+                </thead>
+                <tr v-for="visitors in visitors" v-bind:key="visitors.id">
+                    <!-- <td v-for="visitor in visitors" v-bind:key="visitor.id">{{visitor}}</td> -->
+                    <td>{{ visitors.id }}</td>
+                    <td>{{ visitors.name }}</td>
+                    <td><img v-bind:src="visitors.photo" alt="No image to show" width="100" height="100"></td>
+                    <td>{{ visitors.visits_count }}</td>
+                    <td>{{ visitors.created_at }}</td>
+                    <td>{{ visitors.updated_at }}</td>
+                    <td>{{ visitors.recent_access_at }}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -61,5 +85,8 @@ export default {
 <style scoped>
 div {
   text-align: center;
+}
+table, th, td {
+  border: 1px solid black;
 }
 </style>

@@ -8,3 +8,4 @@ Pillow
 face_recognition
 psycopg2-binary
 python-dotenv
+django-cors-headers

@@ -9,12 +9,12 @@
         <ul class="navbar-nav ms-auto">
           <li v-if="requestUser===null" class="nav-item mx-1">
             <a class="btn btn-danger" href="/accounts/login/"
-              >로그인
+              >Log in
             </a>
           </li>
           <li v-else class="nav-item">
             <a class="btn btn-outline-secondary" href="/accounts/logout/"
-              >로그아웃
+              >Log out
             </a>
           </li>
         </ul>

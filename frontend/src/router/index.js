@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-// ルーター機能で指定されたエンドポイントに移動。→webpackChunkNameでbackend/staticに保存されるjs&cssファイルの名前を指定。
+// routing to a designated endpoint. -> webpackChunkName names js&css files which are saved in backend/static
 const routes = [
   {
     path: "/",

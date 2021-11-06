@@ -1,5 +1,6 @@
 FROM node:14.17.4
 
+COPY . /app/frontend
 WORKDIR /app/frontend
 COPY ./package.json ./
 # EXPOSE 8000
@@ -11,4 +12,4 @@ RUN npm install -g npm
 RUN npm install --save
 
 # start app
-CMD ["npm", "run", "serve"]
+# CMD ["npm", "run", "serve"]

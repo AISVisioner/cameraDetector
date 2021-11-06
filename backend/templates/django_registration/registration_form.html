@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<h3 class="text-light mt-3 mb-4">관리자 계정을 생성</h3>
+<h3 class="text-light mt-3 mb-4">Create an administrator account</h3>
 <div class="form-container">
   <form method="POST">
     {% csrf_token %}
@@ -12,7 +12,7 @@
     
     <div class="form-floating mb-3">
       {% render_field form.username class="form-control" id="floatingUsername" placeholder="Username" %}
-      <label for="floatingUsername">사용자ID</label>
+      <label for="floatingUsername">User ID</label>
       {% if form.username.errors %}
         <div class="text-danger mt-2">
           {% for error in form.username.errors %}
@@ -24,7 +24,7 @@
 
     <div class="form-floating mb-3">
       {% render_field form.email class="form-control" id="floatingEmail" placeholder="Email address" %}
-      <label for="floatingEmail">이메일 주소</label>
+      <label for="floatingEmail">Email address</label>
       {% if form.email.errors %}
         <div class="text-danger mt-2">
           {% for error in form.email.errors %}
@@ -36,7 +36,7 @@
 
     <div class="form-floating mb-3">
       {% render_field form.password1 class="form-control" id="floatingPassword1" placeholder="Choose a password" %}
-      <label for="floatingPassword1">비밀번호를 입력</label>
+      <label for="floatingPassword1">Input a password</label>
       {% if form.password1.errors %}
         <div class="text-danger mt-2">
           {% for error in form.password2.errors %}
@@ -48,7 +48,7 @@
 
     <div class="form-floating mb-3">
       {% render_field form.password2 class="form-control" id="floatingPassword2" placeholder="Repeat your password" %}
-      <label for="floatingPassword2">비밀번호를 다시 입력</label>
+      <label for="floatingPassword2">Input the same password</label>
       {% if form.password2.errors %}
         <div class="text-danger my-2">
           {% for error in form.password2.errors %}
@@ -67,11 +67,11 @@
     {% endif %}
 
     <div class="d-grid gap-2">
-      <button type="submit" class="btn btn-lg btn-primary">계정을 생성</button>
+      <button type="submit" class="btn btn-lg btn-primary">Create a new account</button>
     </div>
   </form>
   <p class="text-light mt-4">
-    <a href="{% url 'login' %}" class="auth-link">로그인</a>
+    <a href="{% url 'login' %}" class="auth-link">Go back to Login</a>
   </p>
 </div>
 {% endblock %}

@@ -23,7 +23,8 @@ class LookupViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         """Use this overridden method to list all the visitors in admin page."""
-        serializer = self.serializer_class(self.queryset, many=True)
+        queryset = Visitor.objects.all().order_by("-created_at")
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     def create(self, request):

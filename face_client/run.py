@@ -86,7 +86,7 @@ def main(argv):
 
         if matched:
             flag = True
-            id = ''
+            # id = '' for future use?
             current_time = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d_%H:%M:%S")
             # name guest_name in the format "guest_current_time_10 digits of uuid" in order to avoid duplicates
             guest_name = f"guest_{current_time}_{str(uuid.uuid4())[:10]}"

@@ -1,15 +1,14 @@
 FROM node:14.17.4
 
-COPY . /app/frontend
 WORKDIR /app/frontend
-# COPY ./package.json ./
-EXPOSE 8000
+COPY ./package.json ./
+# EXPOSE 8000
 
 # update npm
 RUN npm install -g npm
-RUN npm install -g @vue/cli webpack
+# RUN npm install -g @vue/cli
 
 RUN npm install
 
 # start app
-# CMD ["npm", "run", "serve"]
+CMD ["npm", "run", "serve"]

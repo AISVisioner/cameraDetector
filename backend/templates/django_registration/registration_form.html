@@ -48,7 +48,7 @@
 
     <div class="form-floating mb-3">
       {% render_field form.password2 class="form-control" id="floatingPassword2" placeholder="Repeat your password" %}
-      <label for="floatingPassword2">Input the same password</label>
+      <label for="floatingPassword2">Input the same password again</label>
       {% if form.password2.errors %}
         <div class="text-danger my-2">
           {% for error in form.password2.errors %}

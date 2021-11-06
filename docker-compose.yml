@@ -3,7 +3,7 @@ version: '3.3'
 services:
   db:
     image: postgres
-    container_name: docker-django-vue-db
+    container_name: db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -17,7 +17,7 @@ services:
     build:
       context: ./backend/
       dockerfile: ./BackendDockerfile      
-    container_name: docker-django-vue-backend  
+    container_name: backend  
     command: ./backend_setup.sh
     environment:
       POSTGRES_NAME: postgres
@@ -36,7 +36,7 @@ services:
     build:
       context: ./frontend/
       dockerfile: ./FrontendDockerfile
-    container_name: docker-django-vue-frontend
+    container_name: frontend
     command: ./frontend_setup.sh
     volumes:
       - ./frontend:/app/frontend

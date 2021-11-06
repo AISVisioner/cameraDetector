@@ -92,7 +92,7 @@ def main(argv):
             guest_name = f"guest_{current_time}_{str(uuid.uuid4())[:10]}"
             if not os.listdir("./face_client/images") == []:
                 os.remove(f"./face_client/images/{os.listdir('./face_client/images')[0]}")
-            cv.imwrite(f'./face_client/images/{guest_name}.jpg', frame_backup)
+            cv.imwrite(f'./face_client/images/{guest_name}.jpeg', frame_backup)
 
             # Get a visitor to wait for a while
             print("Please wait until your check-in is verified.")
@@ -107,7 +107,7 @@ def main(argv):
 
             #visitor's face picture
             files = {
-                'photo': open(f"./face_client/images/{guest_name}.jpg", 'rb')
+                'photo': open(f"./face_client/images/{guest_name}.jpeg", 'rb')
             }
             # id: uuid, encoding: 128 dimension, name: randomly created name without duplicates
             data = {
@@ -146,27 +146,10 @@ def main(argv):
                 cv.waitKey(1)
                 time.sleep(10)
                 continue
+
+            print(response.json())
             visits_count = response.json()['visits_count']
             guest_name = response.json()['name']
-            # check if guest_name exits as a key in check_if_sometime_passed dict
-            # print(check_if_sometime_passed)
-            # if guest_name not in check_if_sometime_passed.keys():
-            #     check_if_sometime_passed[guest_name] = time.time()
-            # else:
-            #     # inform the visitor that he/she is already verified
-            #     if time.time() - check_if_sometime_passed[guest_name] < WAITING_TIME:
-            #         print("Your check-in is already verified. Please check in again later.")
-            #         engine.say("Your check-in is already verified. Please check in again later.")
-            #         cv.putText(frame, "Your check-in is already verified.", \
-            #             (200,650), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
-            #         cv.putText(frame, "Please check in again later.", \
-            #             (280,700), cv.FONT_HERSHEY_PLAIN, 3, (0, 255,0), 3, cv.LINE_AA)
-            #         cv.imshow(WINDOW_NAME, frame)
-            #         cv.waitKey(1)
-            #         time.sleep(10)
-            #         continue
-            #     else:
-            #         check_if_sometime_passed[guest_name] = time.time()
             # if the visitor visits for the first time
             if visits_count == 1:
                 print(f"{guest_name}: Welcome your first visit!")
@@ -198,9 +181,10 @@ def main(argv):
             time.sleep(10)
             flag = False
 
-    engine.stop()
+    # Stop the engine
     engine.endLoop()
-    # キャプチャをリリースして、ウィンドウをすべて閉じる
+    engine.stop()
+    # Release the video object and close the window
     cap.release()
     cv.destroyAllWindows()
 

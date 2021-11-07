@@ -7,15 +7,16 @@ import time
 from datetime import datetime, timezone
 import os
 import pyttsx3
+from pathlib import Path
 
 from get_token import get_token
+
+# Create a directory for temporarily saving images
+Path(f'{os.path.dirname(os.path.abspath(__file__))}/images').mkdir(parents=True, exist_ok=True)
 
 # the number of count of frames with which a visitor is recognized
 COUNT = 5
 WINDOW_NAME = "cam"
-
-
-users = {}
 
 # Initialize values of pyttsx3 engine
 engine = pyttsx3.init()

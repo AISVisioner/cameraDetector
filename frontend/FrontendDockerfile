@@ -6,7 +6,7 @@ COPY ./package.json ./
 
 # update npm
 RUN npm install -g npm
-RUN npm install -g @vue/cli
+# RUN npm install -g @vue/cli
 
 RUN npm install --save
 

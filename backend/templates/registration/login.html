@@ -2,8 +2,8 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<h1 class="text-light">관리자</h1>
-<p class="text-light mb-4">사용자ID와 비밀번호를 입력</p>
+<h1 class="text-light">Administrator</h1>
+<p class="text-light mb-4">Input User ID and Password</p>
 <div class="form-container">
     <form method="POST">
         {% csrf_token %}
@@ -13,12 +13,12 @@
         
         <div class="form-floating mb-3">
           {% render_field form.username class="form-control" id="floatingUsername" placeholder="Username" %}
-          <label for="floatingUsername">사용자ID</label>
+          <label for="floatingUsername">User ID</label>
         </div>
 
         <div class="form-floating mb-3">
           {% render_field form.password class="form-control" id="floatingPassword" placeholder="Password" %}
-          <label for="floatingPassword">비밀번호</label>
+          <label for="floatingPassword">Password</label>
         </div>
 
         {% if form.errors %}
@@ -30,12 +30,12 @@
         {% endif %}
 
         <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-lg btn-primary">로그인</button>
+          <button type="submit" class="btn btn-lg btn-primary">Login</button>
         </div>
     </form>
 
     <p class="text-light mt-4">
-      <a href="{% url 'entry-point' %}" class="auth-link">메인 화면에 돌아가기</a> 또는 <a href="{% url 'django_registration_register' %}" class="auth-link">계정을 생성</a>
+      <a href="{% url 'django_registration_register' %}" class="auth-link">Create a new account</a>
     </p> 
 </div>
 {% endblock %}

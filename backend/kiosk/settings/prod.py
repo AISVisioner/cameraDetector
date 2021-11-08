@@ -18,17 +18,17 @@ from .base import *
 # SECURITY #
 ############
 
-DEBUG = False # bool(os.getenv('DJANGO_DEBUG', ''))
+DEBUG = True # bool(os.getenv('DJANGO_DEBUG', ''))
 
 # Set to your Domain here (eg. 'yourwebsite.com')
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSOWRD': 'postgres',
+        'PASSWORD': 'postgres',
         'HOST': 'db',
         'PORT': 5432,
     },

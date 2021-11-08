@@ -1,7 +1,8 @@
-FROM python:3
+FROM python:3.8
 ENV   PYTHONUNBUFFERED 1
 
-RUN apt-get update && apt-get -y install cmake protobuf-compiler
+RUN apt-get update && apt-get -y install cmake protobuf-compiler \
+&& apt-get install -y --no-install-recommends postgresql-client
 
 WORKDIR /app/backend
 COPY requirements.txt ./

@@ -3,22 +3,21 @@ version: '3.3'
 services:
   db:
     image: postgres
-    container_name: docker-django-vue-db
+    container_name: db
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
     ports:
       - "5432:5432"
   django:
     build:
       context: ./backend/
       dockerfile: ./BackendDockerfile      
-    container_name: docker-django-vue-backend  
+    container_name: backend  
     command: ./backend_setup.sh
     environment:
       POSTGRES_NAME: postgres
@@ -27,6 +26,8 @@ services:
       POSTGRES_HOST: db
     volumes:
       - ./backend:/app/backend
+      - static-volume:/app/backend/static
+      - templates-volume:/app/backend/templates
     ports:
       - "8000:8000"
     depends_on:
@@ -35,13 +36,22 @@ services:
     build:
       context: ./frontend/
       dockerfile: ./FrontendDockerfile
-    container_name: docker-django-vue-frontend
+    container_name: frontend
     command: ./frontend_setup.sh
     volumes:
       - ./frontend:/app/frontend
+      - static-volume:/app/backend/static
+      - templates-volume:/app/backend/templates
     ports:
       - "8080:8080"
     depends_on:
       - django
 volumes:
   db-data:
+  static-volume:
+  templates-volume:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './backend/templates'

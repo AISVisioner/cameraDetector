@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from lookup.models import Visitor
 
-class UserSerializer(serializers.ModelSerializer):
+class VisitorSerializer(serializers.ModelSerializer):
     # id = serializers.UUIDField(format="hex")
     # name = serializers.CharField()
     encoding = serializers.ListField(child=serializers.FloatField())

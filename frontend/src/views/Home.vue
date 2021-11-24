@@ -101,7 +101,7 @@ export default {
                 }
             } catch (error) {
                 console.log(error.response);
-                alert(error.response.statusText);
+                alert(error.response);
             }
         },
     },

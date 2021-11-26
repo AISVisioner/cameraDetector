@@ -2,28 +2,45 @@
     <div>
         <h1>Logged in as: {{ String(requestUser) }}</h1>
         <div class="container">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>name</th>
-                        <th>photo</th>
-                        <th>visits_count</th>
-                        <th>recent_access_at</th>
-                        <th>created_at</th>
-                        <th>updated_at</th>
-                    </tr>
-                </thead>
-                <tr v-for="visitors in visitors" v-bind:key="visitors.id">
-                    <td>{{ visitors.id }}</td>
-                    <td>{{ visitors.name }}</td>
-                    <td><img v-bind:src="visitors.photo" alt="No image to show" width="100" height="100"></td>
-                    <td>{{ visitors.visits_count }}</td>
-                    <td>{{ visitors.recent_access_at }}</td>
-                    <td>{{ visitors.created_at }}</td>
-                    <td>{{ visitors.updated_at }}</td>
-                </tr>
-            </table>
+        <v-app id="inspire">
+        <v-data-table
+            :headers="headers"
+            :items="visitors"
+            item-key="id"
+            class="elevation-1"
+        >
+            <template v-slot:item.name="{ item }">
+                <v-edit-dialog
+                    :return-value.sync="item.name"
+                    large
+                    persistent
+                    @save="save(item)"
+                    @cancel="cancel"
+                    @open="open"
+                    @close="close"
+                > {{ item.name }}
+                    <template v-slot:input>
+                        <v-text-field
+                            v-model="item.name"
+                            :rules="[max40chars]"
+                            label="Edit"
+                            single-line
+                            counter
+                            autofocus
+                        ></v-text-field>
+                    </template>
+                </v-edit-dialog>
+            </template>
+            <template v-slot:item.photo="{ item }">
+            <div class="p-2">
+                <v-img :src="item.photo" :alt="item.name" width="100px" height="100px"></v-img>
+            </div>
+            </template>
+        </v-data-table>
+        <div>
+            <v-btn color="primary" @click="deleteItem">Delete</v-btn>
+        </div>
+        </v-app>
         </div>
     </div>
 </template>
@@ -39,6 +56,19 @@ export default {
             visitors: [],
             next: null,
             loadingVisitors: false,
+            singleSelected: false,
+            selected: [],
+            headers: 
+            [
+                { text: 'id', value: 'id', align: 'start', sortable: false },
+                { text: 'name', value: 'name' },
+                { text: 'photo', value: 'photo', sortable: false },
+                { text: 'visits_count', value: 'visits_count' },
+                { text: 'recent_access_at', value: 'recent_access_at' },
+                { text: 'created_at', value: 'created_at' },
+                { text: 'updated_at', value: 'updated_at' },
+            ],
+            max40chars: v => v.length <= 40 || 'Input too long!',
         };
     },
     methods: {
@@ -102,6 +132,19 @@ export default {
             } catch (error) {
                 console.log(error.response);
                 alert(error.response);
+            }
+        },
+        save (item) {
+            const headers = {"Authorization": `Token ${window.localStorage.getItem("auth_token")}`};
+            let endpoint = `${process.env.VUE_APP_VISITORSURL}${item.id}/`;
+            const data = {
+                name: item.name,
+            }
+            try {
+                axios.patch(endpoint, data, {headers});
+            } catch (error) {
+                console.log(error.response)
+                alert(error.response)
             }
         },
     },

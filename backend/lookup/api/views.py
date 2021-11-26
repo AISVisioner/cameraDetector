@@ -19,7 +19,7 @@ class LookupViewSet(viewsets.ModelViewSet):
     _visitors_data = initializeVisitors() # instantiate VisitorsData class(a singleton class)
     _visitors = _visitors_data.getVisitors() # initialize the visitors field(type: dict): {uuid: face_encodings}
     __LAPSE = datetime.timedelta(seconds=40) # waiting time for a duplicate user
-    __TOLERANCE = 0.6 # threshold for face_distance
+    __TOLERANCE = 0.4 # threshold for face_distance
 
     def list(self, request):
         """Use this overridden method to list all the visitors in admin page."""
@@ -65,8 +65,15 @@ class LookupViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def partial_update(self, request, pk=None):
-        pass
+    def partial_update(self, request, id=None):
+        self._visitors_data.updateQueryset()
+        self._visitors_data.updateSerializer(save=False)
 
-    def destroy(self, request, pk=None):
+        instance = self._visitors_data.getQueryset().get(pk=id)
+        data = {'name': request.data['name'], 'visits_count': instance.visits_count}
+        self._visitors_data.updateSerializer(instance=instance, data=data, partial=True)
+        print(f"updated a user's name of id-{instance.id} to {request.data['name']}")
+        return Response({"status": "Success"}, status=status.HTTP_206_PARTIAL_CONTENT)
+        
+    def destroy(self, request, id=None):
         pass

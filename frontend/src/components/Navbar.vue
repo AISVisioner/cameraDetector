@@ -8,6 +8,7 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto">
           <li v-if="requestUser===null" class="nav-item mx-1">
+            <img src="@/assets/login.png" />
             <a class="btn btn-danger" href="/accounts/login/"
               >Log in
             </a>

@@ -4,11 +4,21 @@
         <div class="container">
         <v-app id="inspire">
         <v-data-table
+            v-model="selected"
             :headers="headers"
             :items="visitors"
+            :single-select="singleSelect"
             item-key="id"
+            show-select
             class="elevation-1"
         >
+            <template v-slot:top>
+                <v-switch
+                v-model="singleSelect"
+                label="Single select"
+                class="pa-3"
+                ></v-switch>
+            </template>
             <template v-slot:item.name="{ item }">
                 <v-edit-dialog
                     :return-value.sync="item.name"

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeting-kiosk-api-deployment
+  labels:
+    app: greeting-kiosk-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: greeting-kiosk-api
+  template:
+    metadata:
+      labels:
+        app: greeting-kiosk-api
+    spec:
+      containers:
+      - name: greeting-kiosk-api
+        image: 095420225348.dkr.ecr.ap-northest-1.amazonaws.com/greeting_kiosk:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080

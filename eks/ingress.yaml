@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: nginx
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: greeting-kiosk-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "api.greeting-kiosk.org"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: greeting-kiosk-api-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - api.greeting-kiosk.org
+    secretName: greeting-kiosk-api-cert

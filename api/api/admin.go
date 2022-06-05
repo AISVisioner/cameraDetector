@@ -39,11 +39,9 @@ func newAdminResponse(admin db.Admin) adminResponse {
 }
 
 func (server *Server) createAdmin(ctx *gin.Context) {
-	fmt.Println("createAdmin -->")
 	var req createAdminRequest
 	fmt.Println(req)
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		fmt.Println("createdAdmin --> StatusBadRequest")
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
@@ -76,7 +74,6 @@ func (server *Server) createAdmin(ctx *gin.Context) {
 
 	rsp := newAdminResponse(admin)
 	ctx.JSON(http.StatusOK, rsp)
-	fmt.Println("createAdmin <--")
 }
 
 type loginAdminRequest struct {

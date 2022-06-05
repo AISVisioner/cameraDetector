@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	db "github.com/AISVisioner/greeting-kiosk/api/db/sqlc"
@@ -21,6 +22,7 @@ type createVisitorRequest struct {
 func (server *Server) createVisitor(ctx *gin.Context) {
 	var req createVisitorRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		fmt.Println("here")
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}

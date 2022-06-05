@@ -60,16 +60,17 @@ func TestCreateAdminAPI(t *testing.T) {
 		{
 			name: "OK",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  password,
-				"full_name": admin.FullName,
-				"email":     admin.Email,
+				"admin_name": admin.AdminName,
+				"password":   password,
+				"full_name":  admin.FullName,
+				"email":      admin.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.CreateAdminParams{
-					AdminName: admin.AdminName,
-					FullName:  admin.FullName,
-					Email:     admin.Email,
+					AdminName:      admin.AdminName,
+					HashedPassword: password,
+					FullName:       admin.FullName,
+					Email:          admin.Email,
 				}
 				store.EXPECT().
 					CreateAdmin(gomock.Any(), EqCreateAdminParams(arg, password)).
@@ -84,10 +85,10 @@ func TestCreateAdminAPI(t *testing.T) {
 		{
 			name: "InternalError",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  password,
-				"full_name": admin.FullName,
-				"email":     admin.Email,
+				"admin_name": admin.AdminName,
+				"password":   password,
+				"full_name":  admin.FullName,
+				"email":      admin.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -102,10 +103,10 @@ func TestCreateAdminAPI(t *testing.T) {
 		{
 			name: "DuplicateAdminname",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  password,
-				"full_name": admin.FullName,
-				"email":     admin.Email,
+				"admin_name": admin.AdminName,
+				"password":   password,
+				"full_name":  admin.FullName,
+				"email":      admin.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -120,10 +121,10 @@ func TestCreateAdminAPI(t *testing.T) {
 		{
 			name: "InvalidAdminname",
 			body: gin.H{
-				"adminname": "invalid-admin#1",
-				"password":  password,
-				"full_name": admin.FullName,
-				"email":     admin.Email,
+				"admin_name": "invalid-admin#1",
+				"password":   password,
+				"full_name":  admin.FullName,
+				"email":      admin.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -137,10 +138,10 @@ func TestCreateAdminAPI(t *testing.T) {
 		{
 			name: "InvalidEmail",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  password,
-				"full_name": admin.FullName,
-				"email":     "invalid-email",
+				"admin_name": admin.AdminName,
+				"password":   password,
+				"full_name":  admin.FullName,
+				"email":      "invalid-email",
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -154,10 +155,10 @@ func TestCreateAdminAPI(t *testing.T) {
 		{
 			name: "TooShortPassword",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  "123",
-				"full_name": admin.FullName,
-				"email":     admin.Email,
+				"admin_name": admin.AdminName,
+				"password":   "123",
+				"full_name":  admin.FullName,
+				"email":      admin.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -209,8 +210,8 @@ func TestLoginAdminAPI(t *testing.T) {
 		{
 			name: "OK",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  password,
+				"admin_name": admin.AdminName,
+				"password":   password,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -228,8 +229,8 @@ func TestLoginAdminAPI(t *testing.T) {
 		{
 			name: "AdminNotFound",
 			body: gin.H{
-				"adminname": "NotFound",
-				"password":  password,
+				"admin_name": "NotFound",
+				"password":   password,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -244,8 +245,8 @@ func TestLoginAdminAPI(t *testing.T) {
 		{
 			name: "IncorrectPassword",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  "incorrect",
+				"admin_name": admin.AdminName,
+				"password":   "incorrect",
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -260,8 +261,8 @@ func TestLoginAdminAPI(t *testing.T) {
 		{
 			name: "InternalError",
 			body: gin.H{
-				"adminname": admin.AdminName,
-				"password":  password,
+				"admin_name": admin.AdminName,
+				"password":   password,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -276,10 +277,10 @@ func TestLoginAdminAPI(t *testing.T) {
 		{
 			name: "InvalidAdminname",
 			body: gin.H{
-				"adminname": "invalid-admin#1",
-				"password":  password,
-				"full_name": admin.FullName,
-				"email":     admin.Email,
+				"admin_name": "invalid-admin#1",
+				"password":   password,
+				"full_name":  admin.FullName,
+				"email":      admin.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().

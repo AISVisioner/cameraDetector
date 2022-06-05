@@ -190,5 +190,3 @@ yarn-error.log
 test
 out
 .DS_Store
-
-app.env

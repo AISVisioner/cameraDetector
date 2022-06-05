@@ -42,6 +42,7 @@ jobs:
         ECR_REPOSITORY: greeting_kiosk
         IMAGE_TAG: ${{ github.sha }}
       run: |
+        cd api/
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 

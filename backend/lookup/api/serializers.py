@@ -1,3 +1,4 @@
+from datetime import time
 from rest_framework import serializers
 from django.utils import timezone
 
@@ -34,6 +35,7 @@ class VisitorSerializer(serializers.ModelSerializer):
             return instance
         elif instance.name != validated_data['name']: # if a name is updated
             instance.name = validated_data['name']
+            instance.updated_at = timezone.now()
             instance.save()
             return instance
         

@@ -1,0 +1,22 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Visitor {
+ -id: UUID
+ -name: String
+ -encoding: Array
+ -photo: String
+ -visits_count: Integer
+ -recent_access_at: Datetime
+ -created_at: Datetime
+ -updated_at: Datetime
+}
+
+class User{
+    -username: String
+    -password: String
+    -email_address: String
+    -is_active: Boolean
+    -is_staff: Boolean
+    -is_superuser: Boolean
+}
+@enduml

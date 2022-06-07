@@ -31,7 +31,7 @@ urlpatterns = [
         "accounts/register/",
         RegistrationView.as_view(
             form_class=CustomUserForm,
-            success_url="/manager/", # /manager after login or registration
+            success_url="/", # /manager after login or registration
         ),
         name="django_registration_register",
     ),

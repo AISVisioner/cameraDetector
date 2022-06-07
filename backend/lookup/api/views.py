@@ -1,10 +1,13 @@
 from django.utils import timezone
 import datetime
 
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+# from lookup.api.permissions import DeleteForAdminOrSafeOnly
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from lookup.models import Visitor
+from lookup.api.serializers import VisitorSerializer
 
 from lookup.api.visitorsUtils import initializeVisitors
 
@@ -13,13 +16,15 @@ import numpy as np
 
 class LookupViewSet(viewsets.ModelViewSet):
     """Provide CRUD + L functionality for Lookup."""
-    authentication_classes = [TokenAuthentication] # Authenticate access to API by issueing a token
-    permission_classes = [IsAuthenticated] # Allows access only to authenticated users.
+    # authentication_classes = [TokenAuthentication] # Authenticate access to API by issueing a token
+    queryset = Visitor.objects.all().order_by("-created_at")
+    serializer_class = VisitorSerializer
+    permission_classes = [IsAdminUser] # Allows access only to authenticated users.
     lookup_field = "id" # pk
     _visitors_data = initializeVisitors() # instantiate VisitorsData class(a singleton class)
     _visitors = _visitors_data.getVisitors() # initialize the visitors field(type: dict): {uuid: face_encodings}
     __LAPSE = datetime.timedelta(seconds=40) # waiting time for a duplicate user
-    __TOLERANCE = 0.6 # threshold for face_distance
+    __TOLERANCE = 0.4 # threshold for face_distance
 
     def list(self, request):
         """Use this overridden method to list all the visitors in admin page."""
@@ -65,8 +70,23 @@ class LookupViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def partial_update(self, request, pk=None):
-        pass
+    def partial_update(self, request, id=None):
+        self._visitors_data.updateQueryset()
+        self._visitors_data.updateSerializer(save=False)
 
-    def destroy(self, request, pk=None):
-        pass
+        instance = self._visitors_data.getQueryset().get(pk=id)
+        data = {'name': request.data['name'], 'visits_count': instance.visits_count, 'updated_at': timezone.now()}
+        self._visitors_data.updateSerializer(instance=instance, data=data, partial=True)
+        print(f"updated a user's name of id-{instance.id} to {request.data['name']}")
+        return Response({"status": "Success"}, status=status.HTTP_206_PARTIAL_CONTENT)
+        
+    def destroy(self, request, id=None):
+        self._visitors_data.updateQueryset()
+        self._visitors_data.updateSerializer(save=False)
+
+        instance = self._visitors_data.getQueryset().get(pk=id)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()

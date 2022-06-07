@@ -1,3 +1,4 @@
+from datetime import time
 from rest_framework import serializers
 from django.utils import timezone
 
@@ -32,6 +33,12 @@ class VisitorSerializer(serializers.ModelSerializer):
             instance.recent_access_at = timezone.now()
             instance.save() # save the instance to database
             return instance
+        elif instance.name != validated_data['name']: # if a name is updated
+            instance.name = validated_data['name']
+            instance.updated_at = timezone.now()
+            instance.save()
+            return instance
+        
 
     def get_created_at(self, instance):
         return instance.created_at.strftime("%Y-%m-%d_%H:%M:%S")

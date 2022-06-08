@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: greeting-kiosk-api
-        image: 095420225348.dkr.ecr.ap-northest-1.amazonaws.com/greeting_kiosk:latest
+        image: 657544889782.dkr.ecr.ap-northeast-1.amazonaws.com/greeting_kiosk:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
